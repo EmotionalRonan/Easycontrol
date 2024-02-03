@@ -14,6 +14,7 @@ import java.util.UUID;
 import top.saymzx.easycontrol.app.databinding.ActivityMainBinding;
 import top.saymzx.easycontrol.app.entity.AppData;
 import top.saymzx.easycontrol.app.entity.Device;
+import top.saymzx.easycontrol.app.entity.PairDevice;
 import top.saymzx.easycontrol.app.helper.DeviceListAdapter;
 import top.saymzx.easycontrol.app.helper.MyBroadcastReceiver;
 import top.saymzx.easycontrol.app.helper.PublicTools;
@@ -38,7 +39,7 @@ public class MainActivity extends Activity {
     mainActivity = ActivityMainBinding.inflate(this.getLayoutInflater());
     setContentView(mainActivity.getRoot());
     // 检测激活
-    checkActive();
+//    checkActive();
     // 设置设备列表适配器
     deviceListAdapter = new DeviceListAdapter(this);
     mainActivity.devicesList.setAdapter(deviceListAdapter);
@@ -89,6 +90,12 @@ public class MainActivity extends Activity {
   // 设置按钮监听
   private void setButtonListener() {
     mainActivity.buttonAdd.setOnClickListener(v -> ViewTools.createAddDeviceView(this, Device.getDefaultDevice(UUID.randomUUID().toString(), Device.TYPE_NORMAL), deviceListAdapter).show());
+    mainActivity.buttonAdd.setOnLongClickListener(view -> {
+      ViewTools.createPairDeviceView(this, PairDevice.getDefaultPairDevice("","")).show();
+      return false;
+    }
+
+    );
     mainActivity.buttonSet.setOnClickListener(v -> startActivity(new Intent(this, SetActivity.class)));
   }
 

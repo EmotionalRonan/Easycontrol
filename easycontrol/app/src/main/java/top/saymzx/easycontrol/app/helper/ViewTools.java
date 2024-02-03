@@ -2,6 +2,7 @@ package top.saymzx.easycontrol.app.helper;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Application;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.res.Configuration;
@@ -20,12 +21,31 @@ import android.view.animation.OvershootInterpolator;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ScrollView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RestrictTo;
+
+import com.flyfishxu.kadb.Kadb;
+
+import java.io.IOException;
 import java.util.Locale;
 
+import kotlin.coroutines.Continuation;
+import kotlin.coroutines.CoroutineContext;
+import kotlin.coroutines.EmptyCoroutineContext;
+import kotlin.coroutines.intrinsics.IntrinsicsKt;
+import kotlin.coroutines.jvm.internal.SuspendLambda;
+import kotlin.jvm.internal.Intrinsics;
+import kotlinx.coroutines.CoroutineScope;
+import kotlinx.coroutines.Dispatchers;
+import kotlinx.coroutines.GlobalScope;
 import top.saymzx.easycontrol.app.R;
 import top.saymzx.easycontrol.app.databinding.ItemAddDeviceBinding;
 import top.saymzx.easycontrol.app.databinding.ItemLoadingBinding;
+import top.saymzx.easycontrol.app.databinding.ItemPairDeviceBinding;
+import top.saymzx.easycontrol.app.databinding.ItemPairingBinding;
 import top.saymzx.easycontrol.app.databinding.ItemSpinnerBinding;
 import top.saymzx.easycontrol.app.databinding.ItemSwitchBinding;
 import top.saymzx.easycontrol.app.databinding.ItemTextBinding;
@@ -33,6 +53,7 @@ import top.saymzx.easycontrol.app.databinding.ModuleDialogBinding;
 import top.saymzx.easycontrol.app.entity.AppData;
 import top.saymzx.easycontrol.app.entity.Device;
 import top.saymzx.easycontrol.app.entity.MyInterface;
+import top.saymzx.easycontrol.app.entity.PairDevice;
 
 public class ViewTools {
   // 设置全面屏
@@ -114,6 +135,60 @@ public class ViewTools {
     return dialog;
   }
 
+  // 创建新建设备弹窗
+  public static Dialog createPairDeviceView(
+          Context context,
+          PairDevice pairDevice
+  ) {
+    ItemPairDeviceBinding itemPairDeviceBinding = ItemPairDeviceBinding.inflate(LayoutInflater.from(context));
+    Dialog dialog = createDialog(context,true,itemPairDeviceBinding.getRoot());
+
+    // 设置确认按钮监听
+    itemPairDeviceBinding.pair.setOnClickListener(v -> {
+
+      if (String.valueOf(itemPairDeviceBinding.pairCode.getText()).equals("") && String.valueOf(itemPairDeviceBinding.pairAddress.getText()).equals("")) return;
+      pairDevice.pairCode = String.valueOf(itemPairDeviceBinding.pairCode.getText());
+
+      pairDevice.address = String.valueOf(itemPairDeviceBinding.pairAddress.getText());
+
+      try {
+        Pair<String, Integer> address = PublicTools.getIpAndPort(pairDevice.address);
+
+        // 启动配对线程
+        //TODO
+        new Thread(() -> {
+
+//          Kadb.pair(address.first, address.second, pairDevice.pairCode);
+          Toast.makeText(context, "配对中。。。", Toast.LENGTH_SHORT).show();
+
+          pairProgress(pairDevice);
+
+        }
+        ).start();
+
+      }catch (IOException ignored) {
+        ignored.printStackTrace();
+      }
+
+      dialog.cancel();
+
+    });
+    return dialog;
+  }
+
+  private static boolean pairProgress(PairDevice pairDevice )   {
+    try {
+
+      Pair<String, Integer> address = PublicTools.getIpAndPort(pairDevice.address);
+
+      return true;
+
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+
+  }
+
   // 创建设备参数设置页面
   private static final String[] maxSizeList = new String[]{"2560", "1920", "1600", "1280", "1024", "800"};
   private static final String[] maxFpsList = new String[]{"90", "60", "40", "30", "20", "10"};
@@ -173,6 +248,21 @@ public class ViewTools {
     );
     loadingViewParams.gravity = Gravity.CENTER;
     return new Pair<>(loadingView.getRoot(), loadingViewParams);
+  }
+
+  // 创建配对加载框
+  public static Pair<View, WindowManager.LayoutParams> createPairing(Context context) {
+
+    ItemPairingBinding pairingView  = ItemPairingBinding.inflate(LayoutInflater.from(context));
+    WindowManager.LayoutParams pairingViewParams = new WindowManager.LayoutParams(
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ? WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY : WindowManager.LayoutParams.TYPE_PHONE,
+            WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
+            PixelFormat.TRANSLUCENT
+    );
+    pairingViewParams.gravity = Gravity.CENTER;
+    return new Pair<>(pairingView.getRoot(), pairingViewParams);
   }
 
   // 创建纯文本卡片

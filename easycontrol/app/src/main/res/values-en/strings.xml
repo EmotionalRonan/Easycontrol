@@ -69,6 +69,14 @@
   <string name="add_device_option">Advanced options</string>
   <string name="add_device_button">Ok</string>
 
+  <!-- 设备配对模块 -->
+  <string name="pair_device_title">Pair Device</string>
+  <string name="pair_device_title_hint">Wireless debugging function for pairing Android 11 and above systems. After pairing is completed, you need to connect manually on the main interface.</string>
+  <string name="pair_code_hint">Enter the pairing code</string>
+  <string name="pair_device_address_title">Address:Pair-Port</string>
+  <string name="pair_device_address_hint">IP addresses:Pair-Port</string>
+  <string name="pair_device_button">Pair</string>
+
   <!-- 设备设置模块 -->
   <string name="set_device_title">Do what◔ ‸◔?</string>
   <string name="set_device_button_recover">Recovery resolution</string>
@@ -84,6 +92,7 @@
 
   <!-- 加载中模块 -->
   <string name="loading_text">Loading</string>
+  <string name="pairing_text">Pairing</string>
 
   <!-- 错误提示 -->
   <string name="error_no_browser">No default browser</string>

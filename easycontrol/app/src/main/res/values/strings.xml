@@ -68,6 +68,14 @@
   <string name="add_device_option">高级选项</string>
   <string name="add_device_button">确认</string>
 
+  <!-- 设备配对模块 -->
+  <string name="pair_device_title">配对设备</string>
+  <string name="pair_device_title_hint">用于配对安卓11及以上系统的无线调试功能，配对完成后需要在主界面手动连接</string>
+  <string name="pair_code_hint">请输入配对码</string>
+  <string name="pair_device_address_title">地址:配对端口</string>
+  <string name="pair_device_address_hint">请输入IP地址:配对端口</string>
+  <string name="pair_device_button">配对</string>
+
   <!-- 设备设置模块 -->
   <string name="set_device_title">干什么◔ ‸◔?</string>
   <string name="set_device_button_recover">恢复分辨率</string>
@@ -83,6 +91,7 @@
 
   <!-- 加载中模块 -->
   <string name="loading_text">加加加加载中</string>
+  <string name="pairing_text">配配配配对中</string>
 
   <!-- 错误提示 -->
   <string name="error_no_browser">没有默认浏览器</string>
